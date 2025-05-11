@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coquette Monthsary Card</title>
+<style>
+  /* Overall page styling */
+  body {
+    background: linear-gradient(#ffeef8, #fff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #444;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  /* Card container */
+  .card {
+    background: #fff;
+    border: 2px solid #f8c8dc;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 20px auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  /* Title styling */
+  .title {
+    font-family: 'Brush Script MT', cursive;
+    color: #c33;
+    font-size: 2.5em;
+    margin: 0.5em 0 0.2em;
+    position: relative;
+  }
+  .title::before {
+    content: "💕 ";
+  }
+  .title::after {
+    content: " 💕";
+  }
+  /* Message paragraph */
+  .message {
+    font-family: 'Georgia', serif;
+    font-size: 1.1em;
+    line-height: 1.4;
+    margin: 0.5em 0 1.5em;
+    color: #555;
+  }
+  /* Scratch container styling */
+  .scratch-container {
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    margin: 20px auto;
+    border: 3px dashed #f8c8dc;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  /* Hidden image that will be revealed */
+  #scratchImage {
+    width: 100%;
+    display: block;
+  }
+  /* Canvas covers the image */
+  #scratchCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  /* Instruction text */
+  .instructions {
+    font-family: 'Georgia', serif;
+    font-size: 0.9em;
+    color: #888;
+    margin-top: 10px;
+  }
+  @media (max-width: 600px) {
+    .title { font-size: 2em; }
+    .card { padding: 15px; }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="title">Happy Monthsary!</h1>
+    <p class="message">Time really goes by really quick and I can't imagine that it's already been a month. It felt just like yesterday. I hope you appreciate this website and I couldn't give you a physical gift but I'm really hoping you will like this one. I love you Hannah, more months and years to come for the both of us!</p>
+    <div class="scratch-container">
+      <img id="scratchImage" src="IMG_2383.jpg" alt="Hidden image">
+      <canvas id="scratchCanvas"></canvas>
+    </div>
+    <p class="instructions">Scratch the area above to reveal my favourite image of us!</p>
+  </div>
+<script>
+window.addEventListener('load', function() {
+  var img = document.getElementById('scratchImage');
+  var canvas = document.getElementById('scratchCanvas');
+  var ctx = canvas.getContext('2d');
+
+  // Set canvas dimensions to match the loaded image
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  // Fill canvas with solid pink color (scratch overlay)
+  ctx.fillStyle = '#ffe6f2';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Set composite mode to erase on draw
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.lineWidth = 30;
+  ctx.lineCap = 'round';
+
+  var isDrawing = false;
+  var lastX = 0;
+  var lastY = 0;
+
+  function getPointerPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    // Account for scaling
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    var x = (e.clientX - rect.left) * scaleX;
+    var y = (e.clientY - rect.top) * scaleY;
+    return { x: x, y: y };
+  }
+
+  canvas.addEventListener('pointerdown', function(e) {
+    isDrawing = true;
+    var pos = getPointerPos(e);
+    lastX = pos.x;
+    lastY = pos.y;
+  });
+  canvas.addEventListener('pointermove', function(e) {
+    if (!isDrawing) return;
+    var pos = getPointerPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    lastX = pos.x;
+    lastY = pos.y;
+  });
+  canvas.addEventListener('pointerup', function(e) {
+    isDrawing = false;
+  });
+  canvas.addEventListener('pointerleave', function(e) {
+    isDrawing = false;
+  });
+  // Prevent default touch behavior on mobile
+  canvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  }, { passive: false });
+});
+</script>
+</body>
+</html>
